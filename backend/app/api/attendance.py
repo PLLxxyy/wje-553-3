@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.schemas.attendance_schema import AttendanceCreate, AttendanceRead, AttendanceUpdate
+from app.schemas.attendance_schema import AttendanceCreate, AttendanceRead, AttendanceUpdate, CourseAttendanceSummary, StudentAbsenceRank
 from app.services.attendance_service import attendance_service
 
 router = APIRouter(prefix="/attendance", tags=["attendance"])
@@ -24,3 +24,11 @@ def create_attendance(payload: AttendanceCreate, request: Request, db: Session =
 @router.patch("/{attendance_id}", response_model=AttendanceRead)
 def update_attendance(attendance_id: str, payload: AttendanceUpdate, request: Request, db: Session = Depends(get_db)):
     return serialize(attendance_service.update_attendance(db, attendance_id, payload, request.state.user["id"]))
+
+@router.get("/summary/courses", response_model=list[CourseAttendanceSummary])
+def get_course_summary(course_id: str | None = None, db: Session = Depends(get_db)):
+    return attendance_service.get_course_summary(db, course_id)
+
+@router.get("/ranking/absence", response_model=list[StudentAbsenceRank])
+def get_absence_ranking(course_id: str | None = None, top_n: int = 10, db: Session = Depends(get_db)):
+    return attendance_service.get_absence_ranking(db, course_id, top_n)

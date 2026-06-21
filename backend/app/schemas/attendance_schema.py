@@ -26,3 +26,29 @@ class AttendanceRead(AttendanceBase):
 
     class Config:
         from_attributes = True
+
+class CourseAttendanceSummary(BaseModel):
+    course_id: UUID
+    course_name: str
+    total_records: int
+    present_count: int
+    absent_count: int
+    late_count: int
+    leave_count: int
+    pending_count: int
+    attendance_rate: float
+
+    class Config:
+        from_attributes = True
+
+class StudentAbsenceRank(BaseModel):
+    student_id: UUID
+    student_name: str
+    student_no: str
+    absent_count: int
+    late_count: int
+    total_absent: int
+    rank: int
+
+    class Config:
+        from_attributes = True
