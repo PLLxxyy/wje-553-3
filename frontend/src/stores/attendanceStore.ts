@@ -13,7 +13,7 @@ export const useAttendanceStore = defineStore('attendance', {
     },
     async changeStatus(id: string, status: Attendance['status']) {
       await attendanceApi.update(id, { status });
-      await this.fetch();
+      await Promise.all([this.fetch(), this.fetchCourseSummary(), this.fetchAbsenceRanking()]);
     },
     async fetchCourseSummary(params?: Record<string, string>) {
       this.courseSummaries = await attendanceApi.getCourseSummary(params);
